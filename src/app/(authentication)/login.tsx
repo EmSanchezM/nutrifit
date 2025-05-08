@@ -6,10 +6,11 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
 
 export default function LoginScreen() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ export default function LoginScreen() {
       setLoading(true);
       console.log('Login with email');
       console.log({ email, password });
-
+      router.push('protected');
     } catch (error) {
       console.error("Error al iniciar sesión", error);
       Alert.alert("Error al iniciar sesión");

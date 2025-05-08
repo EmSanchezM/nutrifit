@@ -6,10 +6,11 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
 
 export default function RegisterScreen() {
+  const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,7 +32,7 @@ export default function RegisterScreen() {
       setLoading(true);
       console.log('Register');
       console.log({ name, email, password, confirmPassword, age });
-
+      router.push('login');
     } catch (error) {
       console.error("Error al registrar", error);
       Alert.alert("Error al registrar");

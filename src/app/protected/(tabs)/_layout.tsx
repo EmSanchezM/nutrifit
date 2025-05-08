@@ -20,14 +20,15 @@ export default function TabsLayout() {
       />
 
       <Tabs.Screen
-        name='information'
+        name='profile'
         options={{
-          title: 'Information',
+          title: 'Profile',
           tabBarIcon: ({ size, color }) => (
-            <Feather name='info' size={size} color={color} />
+            <Feather name='user' size={size} color={color} />
           ),
         }}
       />
+
       <Tabs.Screen
         name='notifications'
         options={{
@@ -37,12 +38,13 @@ export default function TabsLayout() {
           ),
         }}
       />
+      
       <Tabs.Screen
-        name='profile'
+        name='information'
         options={{
-          title: 'Profile',
+          title: 'Information',
           tabBarIcon: ({ size, color }) => (
-            <Feather name='user' size={size} color={color} />
+            <Feather name='info' size={size} color={color} />
           ),
         }}
       />

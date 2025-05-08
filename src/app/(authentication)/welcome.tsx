@@ -1,5 +1,6 @@
 import { View, Text, Button } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Colors } from '@/shared/constants/colors';
 
 export default function WelcomeScreen() {
   const router = useRouter();
@@ -17,10 +18,13 @@ export default function WelcomeScreen() {
         </Text>
       </View>
       <View className='w-full max-w-sm'>
+        Imagen 
+      </View>
+      <View className='w-full max-w-sm'>
         <Button 
           title='Iniciar sesión'
           onPress={() => router.push('login')}
-          color='#fff'
+          color={Colors.light.primary}
         />
       </View>
     </View>

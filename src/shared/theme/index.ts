@@ -4,7 +4,7 @@ export const theme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-    primary: '#90A955',
+    primary: 'white',
     background: '#000',
     card: '#90A955',
   },

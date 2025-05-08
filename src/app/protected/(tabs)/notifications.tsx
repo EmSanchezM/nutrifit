@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 
-export default function HomeScreen() {
+export default function NotificationsScreen() {
   return (
     <View className='flex-1 items-center justify-center bg-neutral-900 px-6'>
       <View className='w-full max-w-sm'>
@@ -10,11 +10,8 @@ export default function HomeScreen() {
       </View>
       <View className='w-full max-w-sm'>
         <Text className='text-center text-white'>
-          “Una alimentación Balanceada es la clave para un cuerpo fuerte y una mente saludable”
+          Notifications screen
         </Text>
-      </View>
-      <View className='w-full max-w-sm'>
-        Imagen 
       </View>
     </View>
   );
