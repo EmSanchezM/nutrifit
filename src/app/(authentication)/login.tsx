@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -23,9 +24,11 @@ export default function LoginScreen() {
 
     try {
       setLoading(true);
-      console.log('Login with email');
-      console.log({ email, password });
-      router.push('protected');
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) Alert.alert(error.message);
     } catch (error) {
       console.error("Error al iniciar sesión", error);
       Alert.alert("Error al iniciar sesión");
