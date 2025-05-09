@@ -6,11 +6,15 @@ import { View } from 'react-native';
 
 type AuthContextType = {
   user: User | null;
+  session: Session | null;
+  profile: any | null;
   isAuthenticated: boolean;
 };
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
+  session: null,
+  profile: null,
   isAuthenticated: false,
 });
 
@@ -26,12 +30,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<any | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
+        setSession(session);
         setUser(session.user);
         setIsAuthenticated(true);
       }
@@ -42,6 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
+        setSession(session);
         setUser(session.user);
         setIsAuthenticated(true);
       } else {
@@ -55,6 +63,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (!session?.user) {
+      setProfile(null);
+      return;
+    }
+
+    const fetchProfile = async () => {
+      let { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+      setProfile(data);
+    };
+    fetchProfile();
+  }, [session?.user]);
+
   if (isLoading) {
     return (
       <View className='flex-1 items-center justify-center'>
@@ -64,7 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated }}>
+    <AuthContext.Provider value={{ session, user, profile, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );
