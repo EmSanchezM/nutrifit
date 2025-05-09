@@ -17,12 +17,20 @@ export default function ProfileScreen() {
   const [avatarUrl, setAvatarUrl] = useState('');
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.replace('/login');
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
+      router.replace('/(authentication)/login');
+    } catch (error: any) {
+      console.error('Error al cerrar sesión:', error);
+      Alert.alert('Error', error?.message);
+    }
   };
 
   useEffect(() => {
-    if (session) getProfile();
+    if (session && session !== null) getProfile();
   }, [session]);
 
   async function getProfile() {
@@ -61,7 +69,7 @@ export default function ProfileScreen() {
         {/* Profile Header */}
         <View className='w-32 h-32 rounded-full bg-neutral-700 mb-8 overflow-hidden'>
           <Image 
-            source={{ uri: avatarUrl ?? 'USER' }}
+            source={avatarUrl ? { uri: avatarUrl } : { uri: 'https://ui-avatars.com/api/?name=User+Name&background=0D8ABC&color=fff&size=128' }}
             className='w-full h-full'
             defaultSource={require('../../../../assets/images/default-profile.svg')}
           />

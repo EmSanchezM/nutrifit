@@ -1,66 +1,37 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
-import { ActivityIndicator } from 'react-native';
-import { View } from 'react-native';
 
-type AuthContextType = {
-  user: User | null;
+type AuthContext = {
   session: Session | null;
+  user: User | null;
   profile: any | null;
-  isAuthenticated: boolean;
 };
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
+const AuthContext = createContext<AuthContext>({
   session: null,
+  user: null,
   profile: null,
-  isAuthenticated: false,
 });
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [user, setUser] = useState<User | null>(null);
+export const AuthProvider = ({ children }: PropsWithChildren) =>  {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
+  
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setSession(session);
-        setUser(session.user);
-        setIsAuthenticated(true);
-      }
-      setIsLoading(false);
+      setSession(session);
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setSession(session);
-        setUser(session.user);
-        setIsAuthenticated(true);
-      } else {
-        setUser(null);
-        setIsAuthenticated(false);
-      }
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
     });
-
-    return () => {
-      subscription.unsubscribe();
-    };
   }, []);
 
   useEffect(() => {
@@ -70,7 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     const fetchProfile = async () => {
-      let { data, error } = await supabase
+      let { data } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
@@ -80,17 +51,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     fetchProfile();
   }, [session?.user]);
 
-  if (isLoading) {
-    return (
-      <View className='flex-1 items-center justify-center'>
-        <ActivityIndicator size='large' />
-      </View>
-    );
-  }
-
   return (
-    <AuthContext.Provider value={{ session, user, profile, isAuthenticated }}>
+    <AuthContext.Provider value={{ session, user: session?.user ?? null, profile }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
+
+export const useAuth = () => useContext(AuthContext);

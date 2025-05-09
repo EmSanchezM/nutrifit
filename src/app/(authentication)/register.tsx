@@ -33,7 +33,16 @@ export default function RegisterScreen() {
       console.log('Register');
       const {
         error,
-      } = await supabase.auth.signUp({ email, password });
+      } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: {
+            full_name: name,
+            age,
+          },
+        },
+      });
 
       if (error) Alert.alert(error.message);
     } catch (error) {

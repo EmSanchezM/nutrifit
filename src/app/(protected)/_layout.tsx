@@ -2,10 +2,10 @@ import { useAuth } from '@/providers/AuthProvider';
 import { Stack, Redirect } from 'expo-router';
 
 export default function ProtectedLayout() {
-  const { isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
-  if (!isAuthenticated) {
-    return <Redirect href='/login' />;
+  if (!user) {
+    return <Redirect href='/(authentication)/login' />;
   }
 
   return (
